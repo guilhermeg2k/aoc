@@ -3,12 +3,13 @@ const fs = std.fs;
 const print = std.log.warn;
 const expect = std.testing.expect;
 
-const SpelledNumber = enum { zero, one, two, three, four, five, six, seven, eight, nine };
+const SpeltNumber = enum { zero, one, two, three, four, five, six, seven, eight, nine };
 
-fn getSpelledNumberAhead(str: []const u8, index: usize) ?u32 {
-    var number: u32 = @intFromEnum(std.meta.stringToEnum(SpelledNumber, str[index..@min(index + 3, str.len)]) orelse .zero);
-    number = @intFromEnum(std.meta.stringToEnum(SpelledNumber, str[index..@min(index + 4, str.len)]) orelse @as(SpelledNumber, @enumFromInt(number)));
-    number = @intFromEnum(std.meta.stringToEnum(SpelledNumber, str[index..@min(index + 5, str.len)]) orelse @as(SpelledNumber, @enumFromInt(number)));
+fn getSpeltNumberAhead(str: []const u8, index: usize) ?u32 {
+    var speltNumber: SpeltNumber = std.meta.stringToEnum(SpeltNumber, str[index..@min(index + 3, str.len)]) orelse .zero;
+    speltNumber = std.meta.stringToEnum(SpeltNumber, str[index..@min(index + 4, str.len)]) orelse speltNumber;
+    speltNumber = std.meta.stringToEnum(SpeltNumber, str[index..@min(index + 5, str.len)]) orelse speltNumber;
+    const number: u32 = @intFromEnum(speltNumber);
     if (number == 0) return null;
     return number;
 }
@@ -16,7 +17,7 @@ fn getSpelledNumberAhead(str: []const u8, index: usize) ?u32 {
 fn getFirstDigit(str: []const u8) u32 {
     for (str, 0..) |char, i| {
         if (std.ascii.isDigit(char)) return char - 48;
-        if (getSpelledNumberAhead(str, i)) |number| return number;
+        if (getSpeltNumberAhead(str, i)) |number| return number;
     }
     return 0;
 }
@@ -26,7 +27,7 @@ fn getLastDigit(str: []const u8) u32 {
         const index = str.len - 1 - i;
         const curr_char = str[index];
         if (std.ascii.isDigit(str[index])) return curr_char - 48;
-        if (getSpelledNumberAhead(str, index)) |number| return number;
+        if (getSpeltNumberAhead(str, index)) |number| return number;
     }
     return 0;
 }
